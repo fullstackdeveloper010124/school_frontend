@@ -1,4 +1,4 @@
-import { UserPlus, Users, Clock, CheckCircle, LogOut, Activity } from 'lucide-react';
+import { UserPlus, Users, Clock, CheckCircle, LogOut, Activity, X, Phone, Mail, Calendar, MapPin, Shield, Award } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import VolunteerPopupForm from '../components/VolunteerPopupForm';
 import { api } from '../utils/api';
@@ -11,6 +11,7 @@ const Volunteers = () => {
   const [error, setError] = useState<string | null>(null);
   const [selectedVolunteer, setSelectedVolunteer] = useState<number | ''>('');
   const [selectedAssignment, setSelectedAssignment] = useState<string>('');
+  const [profileVolunteer, setProfileVolunteer] = useState<VolunteerType | null>(null);
 
   // Fetch volunteers from backend
   useEffect(() => {
@@ -65,6 +66,14 @@ const Volunteers = () => {
     }
   };
 
+  const openProfile = (volunteer: VolunteerType) => {
+    setProfileVolunteer(volunteer);
+  };
+
+  const closeProfile = () => {
+    setProfileVolunteer(null);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -79,6 +88,172 @@ const Volunteers = () => {
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-red-700 font-medium">Error: {error}</p>
+        </div>
+      )}
+
+      {/* Volunteer Profile Modal */}
+      {profileVolunteer && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 cursor-pointer" onClick={closeProfile}></div>
+          <div className="relative bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white rounded-t-2xl p-6 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-2xl font-bold text-gray-800">Volunteer Profile</h3>
+              <button 
+                onClick={closeProfile}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                <X className="h-6 w-6 text-gray-500" />
+              </button>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Profile Header */}
+              <div className="flex items-start gap-6">
+                <div className="bg-gradient-to-br from-teal-500 to-cyan-600 w-24 h-24 rounded-2xl flex items-center justify-center text-white text-3xl font-bold">
+                  {profileVolunteer.name.charAt(0)}
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-gray-800">{profileVolunteer.name}</h2>
+                  <p className="text-lg text-gray-600 mt-1">{profileVolunteer.role}</p>
+                  <div className="flex items-center gap-2 mt-3">
+                    <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${
+                      profileVolunteer.status === 'active' ? 'bg-green-100 text-green-800' :
+                      profileVolunteer.status === 'pending_approval' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {profileVolunteer.status.replace('_', ' ')}
+                    </span>
+                    {profileVolunteer.isCheckedIn && (
+                      <span className="px-3 py-1.5 rounded-full text-sm font-bold bg-blue-100 text-blue-800 flex items-center gap-1">
+                        <Activity className="h-4 w-4 animate-pulse" />
+                        Checked In
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Contact Information */}
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h4 className="font-bold text-lg text-gray-800 mb-4">Contact Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="flex items-center gap-3">
+                    <Mail className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-500">Email</p>
+                      <p className="font-medium">{profileVolunteer.email}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Phone className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-500">Phone</p>
+                      <p className="font-medium">{profileVolunteer.phone || 'Not provided'}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-500">Join Date</p>
+                      <p className="font-medium">{new Date(profileVolunteer.joinDate).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <MapPin className="h-5 w-5 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-500">Schedule</p>
+                      <p className="font-medium">{profileVolunteer.schedule || 'Not specified'}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Service Information */}
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h4 className="font-bold text-lg text-gray-800 mb-4">Service Information</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="bg-white p-4 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-5 w-5 text-purple-500" />
+                      <p className="text-sm text-gray-500">Hours (Month)</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-800">{profileVolunteer.hoursThisMonth || 0}<span className="text-lg">h</span></p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Award className="h-5 w-5 text-amber-500" />
+                      <p className="text-sm text-gray-500">Total Hours</p>
+                    </div>
+                    <p className="text-2xl font-bold text-gray-800">{profileVolunteer.totalHours || 0}<span className="text-lg">h</span></p>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-gray-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Shield className="h-5 w-5 text-green-500" />
+                      <p className="text-sm text-gray-500">Background Check</p>
+                    </div>
+                    <p className="text-sm font-medium capitalize">{profileVolunteer.backgroundCheck.replace('_', ' ')}</p>
+                    {profileVolunteer.backgroundCheckDate && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        {new Date(profileVolunteer.backgroundCheckDate).toLocaleDateString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Additional Details */}
+              <div className="bg-gray-50 rounded-2xl p-6">
+                <h4 className="font-bold text-lg text-gray-800 mb-4">Additional Details</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Last Visit</p>
+                    <p className="font-medium">
+                      {profileVolunteer.lastVisit 
+                        ? new Date(profileVolunteer.lastVisit).toLocaleDateString()
+                        : 'Never'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Current Assignment</p>
+                    <p className="font-medium">
+                      {profileVolunteer.currentAssignment || 'None'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Check-in Time</p>
+                    <p className="font-medium">
+                      {profileVolunteer.checkInTime 
+                        ? new Date(profileVolunteer.checkInTime).toLocaleString()
+                        : 'Not checked in'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Skills & Emergency Contact */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-50 rounded-2xl p-6">
+                  <h4 className="font-bold text-lg text-gray-800 mb-4">Skills</h4>
+                  {profileVolunteer.skills && profileVolunteer.skills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {profileVolunteer.skills.map((skill, index) => (
+                        <span key={index} className="px-3 py-1.5 bg-white rounded-lg text-sm font-medium border border-gray-200">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500 italic">No skills listed</p>
+                  )}
+                </div>
+                
+                <div className="bg-gray-50 rounded-2xl p-6">
+                  <h4 className="font-bold text-lg text-gray-800 mb-4">Emergency Contact</h4>
+                  <p className="font-medium">{profileVolunteer.emergencyContact || 'Not provided'}</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -302,7 +477,10 @@ const Volunteers = () => {
                     </div>
                   </td>
                   <td className="p-4">
-                    <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all">
+                    <button 
+                      onClick={() => openProfile(volunteer)}
+                      className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:from-blue-600 hover:to-blue-700 shadow-md hover:shadow-lg transition-all"
+                    >
                       View Profile
                     </button>
                   </td>
