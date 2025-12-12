@@ -13,6 +13,15 @@ import SchoolManagementSystem from './pages/SchoolManagementSystem';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import AdminLogin from './pages/auth/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminPendingApproval from './pages/admin/AdminPendingApproval';
+import AdminLayout from './components/AdminLayout';
+import UserManagement from './pages/admin/UserManagement';
+import SecurityLogs from './pages/admin/SecurityLogs';
+import AdminReports from './pages/admin/Reports';
+import AdminEvents from './pages/admin/Events';
+import AccessControl from './pages/admin/AccessControl';
 
 const App = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -75,6 +84,7 @@ const App = () => {
       <Route path="/signup" element={<Signup onSignup={handleSignup} />} />
       <Route path="/login" element={<Login onLogin={handleLogin} setAuth={setIsAuthenticated} />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/admin/login" element={<AdminLogin />} />
       
       {/* Protected Routes */}
       <Route path="/" element={isAuthenticated ? <Layout onLogout={handleLogout}>
@@ -120,6 +130,15 @@ const App = () => {
       <Route path="/school-management" element={isAuthenticated ? <Layout onLogout={handleLogout}>
         <SchoolManagementSystem />
       </Layout> : <Navigate to="/login" />} />
+      
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+      <Route path="/admin/pending-approval" element={<AdminLayout><AdminPendingApproval /></AdminLayout>} />
+      <Route path="/admin/user-management" element={<AdminLayout><UserManagement /></AdminLayout>} />
+      <Route path="/admin/security-logs" element={<AdminLayout><SecurityLogs /></AdminLayout>} />
+      <Route path="/admin/reports" element={<AdminLayout><AdminReports /></AdminLayout>} />
+      <Route path="/admin/events" element={<AdminLayout><AdminEvents /></AdminLayout>} />
+      <Route path="/admin/access-control" element={<AdminLayout><AccessControl /></AdminLayout>} />
       
       {/* Redirect to dashboard if authenticated, otherwise to login */}
       <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
