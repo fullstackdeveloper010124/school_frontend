@@ -1,4 +1,5 @@
-const API_BASE_URL = 'https://school-backend-wzms.onrender.com/api'; 
+// const API_BASE_URL = 'https://school-backend-wzms.onrender.com/api'; 
+const API_BASE_URL = 'https://localhost:3001/api'; 
 
 export const api = {
   // Auth endpoints

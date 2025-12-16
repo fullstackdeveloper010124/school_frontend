@@ -70,6 +70,10 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
             <Shield className="h-5 w-5 mr-3" />
             Security Logs
           </a>
+          <a href="/admin/volunteers-management" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700">
+            <Users className="h-5 w-5 mr-3" />
+            Volunteers Management
+          </a>
           
           <div className="px-4 py-2 mt-6 text-sm text-gray-400 uppercase tracking-wider">System</div>
           <a href="/admin/reports" className="flex items-center px-6 py-3 text-gray-300 hover:bg-gray-700">
